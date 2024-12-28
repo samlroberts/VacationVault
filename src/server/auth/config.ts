@@ -1,8 +1,12 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import Credentials from "next-auth/providers/credentials";
+import { verifyPassword } from "~/utils/password";
+import { getUserFromDb, createUser } from "~/utils/users";
 
 import { db } from "~/server/db";
+import { signInSchema } from "~/utils/zod";
+import { ZodError } from "zod";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -32,24 +36,81 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
-  ],
-  adapter: PrismaAdapter(db),
-  callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
+    Credentials({
+      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      // e.g. domain, username, password, 2FA token, etc.
+      credentials: {
+        email: {
+          label: "Email",
+          type: "text",
+          placeholder: "test@example.com",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+          placeholder: "your password",
+        },
+      },
+      authorize: async (credentials) => {
+        try {
+          let user = null;
+
+          const { email, password } =
+            await signInSchema.parseAsync(credentials);
+
+          // logic to verify if the user exists
+          user = await getUserFromDb(email);
+
+          if (!user) {
+            // No user found, so this is their first attempt to login
+            // Optionally, this is also the place you could do a user registration
+            // throw new Error("Invalid credentials.");
+            const newUser = await createUser(email, password);
+            return newUser;
+            // return null;
+          }
+
+          if (!user.passwordHash) {
+            return null;
+          }
+
+          // logic to verify if the password is correct
+          if (!(await verifyPassword(password, user.passwordHash))) {
+            return null;
+          }
+
+          // return JSON object with the user data
+          return user;
+        } catch (error) {
+          if (error instanceof ZodError) {
+            // Return `null` to indicate that the credentials are invalid
+            return null;
+          }
+          throw error;
+        }
       },
     }),
+  ],
+  adapter: PrismaAdapter(db),
+  session: {
+    strategy: "jwt",
+  },
+  callbacks: {
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
+    },
+    session: ({ session, token }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.sub,
+        },
+      };
+    },
   },
 } satisfies NextAuthConfig;
