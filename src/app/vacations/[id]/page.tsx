@@ -66,20 +66,26 @@ export default async function VacationPage({
               <Link href={`/vacations/${vacation.id}/photos/new`}>
                 Add a photo
               </Link>
+              <Link href={`/vacations/${vacation.id}/photos/edit`}>
+                Edit photos
+              </Link>
               <Suspense fallback={<div>Loading photos...</div>}>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {vacation.photos.length > 0
                     ? vacation.photos.map((photo) => (
                         <div
                           key={photo.id}
-                          className="relative h-64 w-full overflow-hidden rounded-lg"
+                          className="relative flex flex-col gap-2"
                         >
-                          <Image
-                            src={photo.url}
-                            alt={`Vacation photo ${vacation.destination}`}
-                            fill={true}
-                            className="object-cover"
-                          />
+                          <div className="relative h-64 w-full overflow-hidden rounded-lg">
+                            <Image
+                              src={photo.url}
+                              alt={`Vacation photo ${vacation.destination}`}
+                              fill={true}
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="text-gray-700">{photo.caption}</div>
                         </div>
                       ))
                     : "No photos yet"}

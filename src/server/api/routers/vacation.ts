@@ -99,12 +99,45 @@ export const vacationRouter = createTRPCRouter({
       });
     }),
 
-  // addPhotos: protectedProcedure
-  //   .input(z.object({ vacationId: z.string(), photos: z.array(z.string()) }))
-  //   .mutation(async ({ ctx, input }) => {
-  //     return ctx.db.vacation.update({
-  //       where: { id: input.vacationId },
-  //       data: { photos: { set: input.photos.map((url) => ({ url })) } },
-  //     });
-  //   }),
+  addPhotos: protectedProcedure
+    .input(
+      z.object({
+        vacationId: z.string(),
+        photos: z.array(
+          z.object({
+            url: z.string(),
+            caption: z.string(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // First verify the vacation belongs to the user
+      const vacation = await ctx.db.vacation.findFirst({
+        where: {
+          id: input.vacationId,
+          userId: ctx.session.user.id,
+        },
+      });
+
+      if (!vacation) {
+        throw new Error("Vacation not found or unauthorized");
+      }
+
+      return ctx.db.vacation.update({
+        where: {
+          id: input.vacationId,
+          userId: ctx.session.user.id, // Add user check here as well
+        },
+        data: {
+          photos: {
+            create: input.photos.map((photo) => ({
+              url: photo.url,
+              caption: photo.caption,
+              userId: ctx.session.user.id, // Associate photo with user
+            })),
+          },
+        },
+      });
+    }),
 });

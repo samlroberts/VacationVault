@@ -1,7 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -10,55 +10,74 @@ import Image from "next/image";
 import { uploadPhotos } from "./actions/upload";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
+import { Textarea } from "~/components/ui/textarea";
 
-export default function VacationPhotos({ params }: { params: { id: string } }) {
+interface PhotoWithPreview {
+  file: File;
+  url: string;
+  caption: string;
+}
+
+type Params = Promise<{ id: string }>;
+
+export default function VacationPhotos({ params }: { params: Params }) {
   const router = useRouter();
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<{ file: File; url: string }[]>(
-    [],
-  );
+
+  const vacationId = use(params).id;
+  const { mutateAsync: addPhotos } = api.vacation.addPhotos.useMutation();
+
+  const [selectedPhotos, setSelectedPhotos] = useState<PhotoWithPreview[]>([]);
 
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
-      setSelectedFiles((prev) => [...prev, ...newFiles]);
-
-      // Create temporary preview URLs for new files
-      const newPreviews = newFiles.map((file) => ({
+      const newPhotos = newFiles.map((file) => ({
         file,
         url: URL.createObjectURL(file),
+        caption: "", // Initialize with empty caption
       }));
-      setPreviewUrls((prev) => [...prev, ...newPreviews]);
+      setSelectedPhotos((prev) => [...prev, ...newPhotos]);
     }
   };
 
   const handleRemovePhoto = (indexToRemove: number) => {
-    setSelectedFiles((prev) =>
-      prev.filter((_, index) => index !== indexToRemove),
-    );
+    setSelectedPhotos((prev) => {
+      // Clean up the removed preview URL
+      if (!prev[indexToRemove]) return prev;
+      URL.revokeObjectURL(prev[indexToRemove].url);
+      return prev.filter((_, index) => index !== indexToRemove);
+    });
+  };
 
-    // Clean up the removed preview URL
-    URL.revokeObjectURL(previewUrls[indexToRemove]?.url ?? "");
-    setPreviewUrls((prev) =>
-      prev.filter((_, index) => index !== indexToRemove),
+  const handleCaptionChange = (index: number, caption: string) => {
+    setSelectedPhotos((prev) =>
+      prev.map((photo, i) => (i === index ? { ...photo, caption } : photo)),
     );
   };
 
   const handleUpload = async () => {
     try {
-      if (selectedFiles.length > 0) {
+      if (selectedPhotos.length > 0) {
         const formData = new FormData();
-        selectedFiles.forEach((file) => {
-          formData.append("files", file);
+        selectedPhotos.forEach((photo) => {
+          formData.append(`files`, photo.file);
+          formData.append(`captions`, photo.caption);
         });
         const uploadedUrls = await uploadPhotos(formData);
         console.log("Uploaded URLs:", uploadedUrls);
 
+        await addPhotos({
+          vacationId: vacationId,
+          photos: uploadedUrls.map((url, index) => ({
+            url,
+            caption: selectedPhotos[index]?.caption ?? "",
+          })),
+        });
+
         // Clean up
-        previewUrls.forEach(({ url }) => URL.revokeObjectURL(url));
-        setPreviewUrls([]);
-        setSelectedFiles([]);
-        router.push(`/vacations/${params.id}`);
+        selectedPhotos.forEach(({ url }) => URL.revokeObjectURL(url));
+        setSelectedPhotos([]);
+        router.push(`/vacations/${vacationId}`);
       }
     } catch (error) {
       console.error("Error uploading photos:", error);
@@ -68,9 +87,9 @@ export default function VacationPhotos({ params }: { params: { id: string } }) {
   // Clean up preview URLs when component unmounts
   useEffect(() => {
     return () => {
-      previewUrls.forEach(({ url }) => URL.revokeObjectURL(url));
+      selectedPhotos.forEach(({ url }) => URL.revokeObjectURL(url));
     };
-  }, [previewUrls]);
+  }, [selectedPhotos]);
 
   return (
     <div className="container mx-auto p-4">
@@ -87,42 +106,55 @@ export default function VacationPhotos({ params }: { params: { id: string } }) {
               onChange={handlePhotoSelect}
               accept="image/*"
               multiple
-              // Clear the input value after each selection
               onClick={(e) => (e.currentTarget.value = "")}
             />
           </div>
-          {previewUrls.length > 0 && (
-            <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-              {previewUrls.map(({ url }, index) => (
-                <div key={index} className="group relative">
-                  <Image
-                    src={url}
-                    alt={`Vacation photo ${index + 1}`}
-                    width={200}
-                    height={200}
-                    className="h-48 w-full rounded-md object-cover"
-                  />
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100"
-                    onClick={() => handleRemovePhoto(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+          {selectedPhotos.length > 0 && (
+            <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {selectedPhotos.map((photo, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="group relative aspect-video">
+                    <Image
+                      src={photo.url}
+                      alt={`Vacation photo ${index + 1}`}
+                      fill
+                      className="rounded-md object-cover"
+                    />
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100"
+                      onClick={() => handleRemovePhoto(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor={`caption-${index}`}>Caption</Label>
+                    <Textarea
+                      id={`caption-${index}`}
+                      value={photo.caption}
+                      onChange={(e) =>
+                        handleCaptionChange(index, e.target.value)
+                      }
+                      placeholder="Add a caption to this photo..."
+                      rows={2}
+                      className="resize-none"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
           )}
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              {selectedFiles.length} photos selected
+              {selectedPhotos.length} photos selected
             </p>
             <Button
               onClick={handleUpload}
-              disabled={selectedFiles.length === 0}
+              disabled={selectedPhotos.length === 0}
             >
-              Upload {selectedFiles.length} Photos
+              Upload {selectedPhotos.length} Photos
             </Button>
           </div>
         </CardContent>

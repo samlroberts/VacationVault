@@ -51,6 +51,7 @@ model User {
     passwordHash  String?
     accounts      Account[]
     sessions      Session[]
+    photos        Photo[]
 
     Vacation Vacation[]
 }
@@ -84,6 +85,8 @@ model Photo {
     vacationId String
     vacation Vacation @relation(fields: [vacationId], references: [id], onDelete: Cascade)
     caption String?
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

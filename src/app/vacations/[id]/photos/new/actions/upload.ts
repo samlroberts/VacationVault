@@ -5,7 +5,6 @@ import { join } from "path";
 
 export async function uploadPhotos(data: FormData) {
   const files = data.getAll("files") as File[];
-
   if (!files || files.length === 0) {
     throw new Error("No files uploaded");
   }

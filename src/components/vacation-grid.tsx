@@ -9,11 +9,11 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { type Vacation } from "@prisma/client";
 import Link from "next/link";
+import { type VacationWithPhotos } from "~/lib/types";
 
 interface VacationGridProps {
-  vacations: Vacation[];
+  vacations: VacationWithPhotos[];
 }
 
 export default function VacationGrid({ vacations }: VacationGridProps) {
@@ -24,7 +24,7 @@ export default function VacationGrid({ vacations }: VacationGridProps) {
           <CardHeader className="p-0">
             <div className="relative h-48 w-full">
               <Image
-                src={"https://placehold.co/500x200"}
+                src={vacation.photos[0]?.url ?? "https://placehold.co/500x200"}
                 alt={`Photo of ${vacation.destination}`}
                 objectFit="cover"
                 fill={true}
@@ -41,9 +41,11 @@ export default function VacationGrid({ vacations }: VacationGridProps) {
             </p>
           </CardContent>
           <CardFooter className="p-4">
-            <Button variant="outline" className="w-full">
-              <Link href={`/vacations/${vacation.id}`}>View Details</Link>
-            </Button>
+            <Link href={`/vacations/${vacation.id}`}>
+              <Button variant="outline" className="w-full">
+                View Details
+              </Button>
+            </Link>
           </CardFooter>
         </Card>
       ))}

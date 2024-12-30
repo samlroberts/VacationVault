@@ -7,10 +7,15 @@ import VacationGrid from "~/components/vacation-grid";
 import { auth } from "~/server/auth";
 import { HydrateClient } from "~/trpc/server";
 import { db } from "~/server/db";
-async function getVacations(userId: string): Promise<Vacation[]> {
+import { type VacationWithPhotos } from "~/lib/types";
+
+async function getVacations(userId: string): Promise<VacationWithPhotos[]> {
   const vacations = await db.vacation.findMany({
     where: {
       userId,
+    },
+    include: {
+      photos: true,
     },
   });
 
