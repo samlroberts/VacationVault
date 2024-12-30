@@ -17,19 +17,21 @@ import {
 export function DatePickerWithRange({
   className,
   onDateChange,
+  defaultDateRange,
 }: React.HTMLAttributes<HTMLDivElement> & {
   onDateChange: (date: DateRange) => void;
+  defaultDateRange?: DateRange;
 }) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 10),
-  });
+  const [date, setDate] = React.useState<DateRange | undefined>(
+    defaultDateRange,
+  );
 
   React.useEffect(() => {
     if (date) {
       onDateChange(date);
     }
-  }, [date, onDateChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [date]);
 
   return (
     <div className={cn("grid gap-2", className)}>
