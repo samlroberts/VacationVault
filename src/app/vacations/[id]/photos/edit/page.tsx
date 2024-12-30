@@ -1,4 +1,3 @@
-import { type Photo, type Vacation } from "@prisma/client";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -9,9 +8,7 @@ import { HydrateClient } from "~/trpc/server";
 import EditPhotoForm from "./edit-photo-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-type VacationWithPhotos = Vacation & {
-  photos: Photo[];
-};
+import { type VacationWithPhotos } from "~/lib/types";
 
 async function getVacation(id: string): Promise<VacationWithPhotos | null> {
   const vacation = await db.vacation.findUnique({
@@ -28,7 +25,7 @@ async function getVacation(id: string): Promise<VacationWithPhotos | null> {
 export default async function EditPhotosPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await auth();
 
@@ -36,7 +33,9 @@ export default async function EditPhotosPage({
     redirect("/api/auth/signin");
   }
 
-  const vacation = await getVacation(params.id);
+  const vacationId = (await params).id;
+
+  const vacation = await getVacation(vacationId);
 
   if (!vacation) {
     redirect("/");

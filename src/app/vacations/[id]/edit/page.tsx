@@ -10,9 +10,11 @@ import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/trpc/react";
 import { DatePickerWithRange } from "~/components/ui/dateRangePicker";
 
-type Params = Promise<{ id: string }>;
-
-export default function EditVacation({ params }: { params: Params }) {
+export default function EditVacation({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const router = useRouter();
   const vacationId = use(params).id;
 
