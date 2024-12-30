@@ -10,6 +10,7 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { type Vacation } from "@prisma/client";
+import Link from "next/link";
 
 interface VacationGridProps {
   vacations: Vacation[];
@@ -41,7 +42,7 @@ export default function VacationGrid({ vacations }: VacationGridProps) {
           </CardContent>
           <CardFooter className="p-4">
             <Button variant="outline" className="w-full">
-              View Details
+              <Link href={`/vacations/${vacation.id}`}>View Details</Link>
             </Button>
           </CardFooter>
         </Card>

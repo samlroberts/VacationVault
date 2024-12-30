@@ -98,4 +98,13 @@ export const vacationRouter = createTRPCRouter({
         },
       });
     }),
+
+  // addPhotos: protectedProcedure
+  //   .input(z.object({ vacationId: z.string(), photos: z.array(z.string()) }))
+  //   .mutation(async ({ ctx, input }) => {
+  //     return ctx.db.vacation.update({
+  //       where: { id: input.vacationId },
+  //       data: { photos: { set: input.photos.map((url) => ({ url })) } },
+  //     });
+  //   }),
 });
