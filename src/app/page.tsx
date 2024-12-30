@@ -32,7 +32,10 @@ export default async function Home() {
       <Link className="text-blue-500" href="/api/auth/signout">
         Sign out
       </Link>
-
+      <hr />
+      <Link className="text-blue-500" href="/vacations/new">
+        Add a vacation
+      </Link>
       <div className="container mx-auto p-4">
         <h1 className="mb-6 text-2xl font-bold">Your Vacations</h1>
         <Suspense fallback={<div>Loading vacations...</div>}>

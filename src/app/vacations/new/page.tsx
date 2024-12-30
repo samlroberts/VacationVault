@@ -7,36 +7,39 @@ import { Label } from "~/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Textarea } from "~/components/ui/textarea";
 import { DatePickerWithRange } from "~/components/ui/dateRangePicker";
-
-interface Vacation {
-  id: number;
-  destination: string;
-  startDate: string;
-  endDate: string;
-  description?: string;
-}
+import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 export default function VacationTracker() {
-  const [vacations, setVacations] = useState<Vacation[]>([]);
+  const router = useRouter();
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
 
+  const { mutate: createVacation } = api.vacation.create.useMutation({
+    onSuccess: () => {
+      toast.success("Vacation created successfully");
+      router.push("/");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const newVacation: Vacation = {
-        id: Date.now(),
+      createVacation({
+        name,
         destination,
         startDate,
         endDate,
-        description: description ?? undefined,
-      };
-
-      setVacations([...vacations, newVacation]);
+        description,
+      });
 
       // Clean up
       setDestination("");
