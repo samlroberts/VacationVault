@@ -32,14 +32,23 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <div>Logged in</div>
-      <Link className="text-blue-500" href="/api/auth/signout">
-        Sign out
-      </Link>
-      <hr />
-      <Link className="text-blue-500" href="/vacations/new">
-        Add a vacation
-      </Link>
+      <header className="flex items-center justify-between bg-white p-4 shadow-sm">
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-600">Logged in</span>
+          <Link
+            className="text-sm text-gray-600 hover:text-gray-900"
+            href="/api/auth/signout"
+          >
+            Sign out
+          </Link>
+        </div>
+        <Link
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          href="/vacations/new"
+        >
+          Add a vacation
+        </Link>
+      </header>
       <div className="container mx-auto p-4">
         <h1 className="mb-6 text-2xl font-bold">Your Vacations</h1>
         <Suspense fallback={<div>Loading vacations...</div>}>

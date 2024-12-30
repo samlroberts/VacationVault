@@ -101,7 +101,12 @@ export default function VacationTracker() {
                 placeholder="Add a description to your vacation"
               />
             </div>
-            <Button type="submit">Add Vacation</Button>
+            <div className="flex justify-end gap-2">
+              <Button type="submit">Add Vacation</Button>
+              <Button variant="secondary" onClick={() => router.back()}>
+                Cancel
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
