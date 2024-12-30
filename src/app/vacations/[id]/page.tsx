@@ -62,13 +62,23 @@ export default async function VacationPage({
             </div>
 
             <div>
-              <h2 className="mb-4 text-xl font-semibold">Photos</h2>
-              <Link href={`/vacations/${vacation.id}/photos/new`}>
-                Add a photo
-              </Link>
-              <Link href={`/vacations/${vacation.id}/photos/edit`}>
-                Edit photos
-              </Link>
+              <div className="flex justify-between">
+                <h2 className="mb-4 text-xl font-semibold">Photos</h2>
+                <div className="mb-4 flex gap-4">
+                  <Link
+                    href={`/vacations/${vacation.id}/photos/new`}
+                    className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                  >
+                    Add photos
+                  </Link>
+                  <Link
+                    href={`/vacations/${vacation.id}/photos/edit`}
+                    className="inline-flex items-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80"
+                  >
+                    Edit photos
+                  </Link>
+                </div>
+              </div>
               <Suspense fallback={<div>Loading photos...</div>}>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {vacation.photos.length > 0
