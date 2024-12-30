@@ -1,4 +1,3 @@
-import { type Vacation } from "@prisma/client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";

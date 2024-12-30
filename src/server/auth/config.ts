@@ -113,4 +113,10 @@ export const authConfig = {
       };
     },
   },
+  theme: {
+    colorScheme: "auto",
+    logo: "/logo.svg",
+    brandColor: "#4F46E5",
+    buttonText: "#FFFFFF",
+  },
 } satisfies NextAuthConfig;
