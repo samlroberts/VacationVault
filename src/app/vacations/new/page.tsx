@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Textarea } from "~/components/ui/textarea";
-import { uploadPhoto } from "../actions/upload";
 import { DatePickerWithRange } from "~/components/ui/dateRangePicker";
 
 interface Vacation {
@@ -15,8 +13,7 @@ interface Vacation {
   destination: string;
   startDate: string;
   endDate: string;
-  photoUrl?: string;
-  caption?: string;
+  description?: string;
 }
 
 export default function VacationTracker() {
@@ -24,41 +21,32 @@ export default function VacationTracker() {
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [caption, setCaption] = useState("");
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [description, setDescription] = useState("");
   const [name, setName] = useState("");
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      const file = e.target.files[0];
-      const formData = new FormData();
-      formData.append("file", file);
 
-      try {
-        const uploadedPhotoUrl = await uploadPhoto(formData);
-        setPhotoUrl(uploadedPhotoUrl);
-      } catch (error) {
-        console.error("Error uploading photo:", error);
-      }
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newVacation: Vacation = {
-      id: Date.now(),
-      destination,
-      startDate,
-      endDate,
-      photoUrl: photoUrl ?? undefined,
-      caption: caption ?? undefined,
-    };
-    setVacations([...vacations, newVacation]);
-    setDestination("");
-    setStartDate("");
-    setEndDate("");
-    setCaption("");
-    setPhotoUrl(null);
-    setName("");
+
+    try {
+      const newVacation: Vacation = {
+        id: Date.now(),
+        destination,
+        startDate,
+        endDate,
+        description: description ?? undefined,
+      };
+
+      setVacations([...vacations, newVacation]);
+
+      // Clean up
+      setDestination("");
+      setStartDate("");
+      setEndDate("");
+      setDescription("");
+      setName("");
+    } catch (error) {
+      console.error("Error saving vacation:", error);
+    }
   };
 
   return (
@@ -102,32 +90,12 @@ export default function VacationTracker() {
               />
             </div>
             <div>
-              <Label htmlFor="photo">Photo</Label>
-              <Input
-                id="photo"
-                type="file"
-                onChange={handlePhotoUpload}
-                accept="image/*"
-              />
-            </div>
-            {photoUrl && (
-              <div className="mt-2">
-                <Image
-                  src={photoUrl}
-                  alt="Uploaded vacation photo"
-                  width={200}
-                  height={200}
-                  className="rounded-md"
-                />
-              </div>
-            )}
-            <div>
-              <Label htmlFor="caption">Caption</Label>
+              <Label htmlFor="caption">Trip Description</Label>
               <Textarea
-                id="caption"
-                value={caption}
-                onChange={(e) => setCaption(e.target.value)}
-                placeholder="Add a caption to your vacation photo"
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Add a description to your vacation"
               />
             </div>
             <Button type="submit">Add Vacation</Button>
