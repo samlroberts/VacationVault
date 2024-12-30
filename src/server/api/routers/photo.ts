@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { unlink } from "fs/promises";
+import { join } from "path";
 
 export const photoRouter = createTRPCRouter({
   update: protectedProcedure
@@ -41,8 +43,19 @@ export const photoRouter = createTRPCRouter({
         throw new Error("Not authorized");
       }
 
+      try {
+        await deleteFile(photo.url);
+      } catch (error) {
+        console.error("Error deleting file", error);
+      }
+
       return ctx.db.photo.delete({
         where: { id: input.id },
       });
     }),
 });
+
+async function deleteFile(url: string) {
+  const filePath = join(process.cwd(), "public", url);
+  await unlink(filePath);
+}

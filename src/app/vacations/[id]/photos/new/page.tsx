@@ -24,10 +24,11 @@ export default function VacationPhotos({ params }: { params: Params }) {
   const router = useRouter();
 
   const vacationId = use(params).id;
-  const { mutateAsync: addPhotos } = api.vacation.addPhotos.useMutation();
+  const { mutateAsync: addPhotos, isPending } =
+    api.vacation.addPhotos.useMutation();
 
   const [selectedPhotos, setSelectedPhotos] = useState<PhotoWithPreview[]>([]);
-
+  const [isUploading, setIsUploading] = useState(false);
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
@@ -57,6 +58,7 @@ export default function VacationPhotos({ params }: { params: Params }) {
 
   const handleUpload = async () => {
     try {
+      setIsUploading(true);
       if (selectedPhotos.length > 0) {
         const formData = new FormData();
         selectedPhotos.forEach((photo) => {
@@ -77,6 +79,7 @@ export default function VacationPhotos({ params }: { params: Params }) {
         // Clean up
         selectedPhotos.forEach(({ url }) => URL.revokeObjectURL(url));
         setSelectedPhotos([]);
+        setIsUploading(false);
         router.push(`/vacations/${vacationId}`);
       }
     } catch (error) {
@@ -152,7 +155,7 @@ export default function VacationPhotos({ params }: { params: Params }) {
             </p>
             <Button
               onClick={handleUpload}
-              disabled={selectedPhotos.length === 0}
+              disabled={selectedPhotos.length === 0 || isUploading || isPending}
             >
               Upload {selectedPhotos.length} Photos
             </Button>
