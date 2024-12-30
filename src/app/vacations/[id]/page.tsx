@@ -1,4 +1,5 @@
 import { type Photo, type Vacation } from "@prisma/client";
+import { PencilIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -46,8 +47,17 @@ export default async function VacationPage({
       <div className="container mx-auto p-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl font-bold">
-              {vacation.name}
+            <CardTitle className="flex w-full items-center justify-between">
+              <div className="flex items-center gap-2 text-3xl font-bold">
+                {vacation.name}
+              </div>
+              <Link
+                href={`/vacations/${vacation.id}/edit`}
+                className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80"
+              >
+                <PencilIcon className="h-4 w-4" />
+                Edit Vacation Details
+              </Link>
             </CardTitle>
             <p className="text-lg text-gray-600">{vacation.destination}</p>
             <p className="text-sm text-gray-500">

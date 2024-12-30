@@ -153,12 +153,23 @@ export default function VacationPhotos({ params }: { params: Params }) {
             <p className="text-sm text-muted-foreground">
               {selectedPhotos.length} photos selected
             </p>
-            <Button
-              onClick={handleUpload}
-              disabled={selectedPhotos.length === 0 || isUploading || isPending}
-            >
-              Upload {selectedPhotos.length} Photos
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push(`/vacations/${vacationId}`)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpload}
+                disabled={
+                  selectedPhotos.length === 0 || isUploading || isPending
+                }
+              >
+                Upload {selectedPhotos.length} Photos
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

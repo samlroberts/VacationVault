@@ -7,7 +7,8 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { HydrateClient } from "~/trpc/server";
 import EditPhotoForm from "./edit-photo-form";
-
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 type VacationWithPhotos = Vacation & {
   photos: Photo[];
 };
@@ -47,7 +48,12 @@ export default async function EditPhotosPage({
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl font-bold">
-              Edit Photos for {vacation.name}
+              <div className="flex items-center gap-2">
+                <Link href={`/vacations/${vacation.id}`}>
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+                Edit Photos for {vacation.name}
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
