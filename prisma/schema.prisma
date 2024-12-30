@@ -51,6 +51,8 @@ model User {
     passwordHash  String?
     accounts      Account[]
     sessions      Session[]
+
+    Vacation Vacation[]
 }
 
 model VerificationToken {
@@ -59,4 +61,29 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Vacation {
+    id String @id @default(cuid())
+    name String
+    destination String
+    startDate DateTime
+    endDate DateTime
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    photos Photo[]
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Photo {
+    id String @id @default(cuid())
+    url String
+    vacationId String
+    vacation Vacation @relation(fields: [vacationId], references: [id], onDelete: Cascade)
+    caption String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
