@@ -65,7 +65,7 @@ export default function VacationPhotos({ params }: { params: Params }) {
           formData.append(`files`, photo.file);
           formData.append(`captions`, photo.caption);
         });
-        const uploadedUrls = await uploadPhotos(formData);
+        const uploadedUrls = await uploadPhotos(formData, vacationId);
         console.log("Uploaded URLs:", uploadedUrls);
 
         await addPhotos({
