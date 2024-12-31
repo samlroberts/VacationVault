@@ -1,4 +1,5 @@
-import Link from "next/link";
+// import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import VacationGrid from "~/components/vacation-grid";
@@ -32,7 +33,7 @@ export default async function Home() {
   const vacations = await getVacations(session.user.id);
 
   return (
-    <HydrateClient>
+    <div>
       <header className="flex items-center justify-between bg-white p-4 shadow-sm">
         <div className="flex items-center gap-4">
           <Link
@@ -45,8 +46,9 @@ export default async function Home() {
         <Link
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           href="/vacations/new"
+          style={{ viewTransitionName: "add-vacation-button" }}
         >
-          Add a vacation
+          Add vacation
         </Link>
       </header>
       <div className="container mx-auto p-4">
@@ -64,6 +66,6 @@ export default async function Home() {
           )}
         </Suspense>
       </div>
-    </HydrateClient>
+    </div>
   );
 }

@@ -23,6 +23,14 @@ export default function EditVacation({
   const { data: vacation } = api.vacation.getById.useQuery({ id: vacationId });
   const { mutateAsync: updateVacation, isPending } =
     api.vacation.update.useMutation();
+  const { mutateAsync: deleteVacation } = api.vacation.delete.useMutation();
+
+  const handleDelete = async () => {
+    if (confirm("Are you sure you want to delete this vacation?")) {
+      await deleteVacation({ id: vacationId });
+      router.push("/");
+    }
+  };
 
   // Add this new state to track the initial date range
   const [initialDateRange, setInitialDateRange] = useState<{
@@ -148,17 +156,26 @@ export default function EditVacation({
               }}
             />
 
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-between space-x-4">
               <Button
+                variant="destructive"
+                onClick={handleDelete}
                 type="button"
-                variant="outline"
-                onClick={() => router.push(`/vacations/${vacationId}`)}
               >
-                Cancel
+                Delete
               </Button>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? "Saving..." : "Save Changes"}
-              </Button>
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push(`/vacations/${vacationId}`)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
             </div>
           </form>
         </CardContent>

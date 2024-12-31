@@ -59,22 +59,26 @@ export default async function EditPhotosPage({
             <Suspense fallback={<div>Loading photos...</div>}>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {vacation.photos.length > 0 ? (
-                  vacation.photos.map((photo) => (
-                    <div
-                      key={photo.id}
-                      className="relative flex flex-col gap-4"
-                    >
-                      <div className="relative h-64 w-full overflow-hidden rounded-lg">
-                        <Image
-                          src={photo.url}
-                          alt={`Vacation photo ${vacation.destination}`}
-                          fill={true}
-                          className="object-cover"
-                        />
+                  vacation.photos.map((photo) => {
+                    const viewTransitionName = `vacation-photo-${vacation.id}-${photo.id}`;
+                    return (
+                      <div
+                        key={photo.id}
+                        style={{ viewTransitionName }}
+                        className="relative flex flex-col gap-4"
+                      >
+                        <div className="relative h-64 w-full overflow-hidden rounded-lg">
+                          <Image
+                            src={photo.url}
+                            alt={`Vacation photo ${vacation.destination}`}
+                            fill={true}
+                            className="object-cover"
+                          />
+                        </div>
+                        <EditPhotoForm photo={photo} vacationId={vacation.id} />
                       </div>
-                      <EditPhotoForm photo={photo} vacationId={vacation.id} />
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <p>No photos to edit</p>
                 )}
