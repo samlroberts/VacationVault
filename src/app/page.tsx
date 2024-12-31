@@ -7,6 +7,7 @@ import { auth } from "~/server/auth";
 import { HydrateClient } from "~/trpc/server";
 import { db } from "~/server/db";
 import { type VacationWithPhotos } from "~/lib/types";
+import { Button } from "~/components/ui/button";
 
 async function getVacations(userId: string): Promise<VacationWithPhotos[]> {
   const vacations = await db.vacation.findMany({
@@ -34,12 +35,11 @@ export default async function Home() {
     <HydrateClient>
       <header className="flex items-center justify-between bg-white p-4 shadow-sm">
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">Logged in</span>
           <Link
             className="text-sm text-gray-600 hover:text-gray-900"
             href="/api/auth/signout"
           >
-            Sign out
+            <Button variant="destructive">Sign out</Button>
           </Link>
         </div>
         <Link

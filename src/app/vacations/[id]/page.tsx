@@ -1,4 +1,4 @@
-import { PencilIcon } from "lucide-react";
+import { ArrowLeft, PencilIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -48,6 +48,9 @@ export default async function VacationPage({
           <CardHeader>
             <CardTitle className="flex w-full items-center justify-between">
               <div className="flex items-center gap-2 text-3xl font-bold">
+                <Link href={`/`}>
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
                 {vacation.name}
               </div>
               <Link
@@ -94,7 +97,7 @@ export default async function VacationPage({
                     ? vacation.photos.map((photo) => (
                         <div
                           key={photo.id}
-                          className="relative flex flex-col gap-2"
+                          className="relative flex flex-col gap-2 rounded-lg border-2 border-solid border-gray-200 p-2"
                         >
                           <div className="relative h-64 w-full overflow-hidden rounded-lg">
                             <Image
