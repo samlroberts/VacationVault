@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import VacationGrid from "~/components/vacation-grid";
 
 import { auth } from "~/server/auth";
-import { HydrateClient } from "~/trpc/server";
 import { db } from "~/server/db";
 import { type VacationWithPhotos } from "~/lib/types";
 import { Button } from "~/components/ui/button";
