@@ -108,7 +108,10 @@ export default async function VacationPage({
                             <div className="relative h-64 w-full overflow-hidden rounded-lg">
                               <Image
                                 src={photo.url}
-                                alt={`Vacation photo ${vacation.destination}`}
+                                alt={
+                                  photo.caption ??
+                                  `Vacation photo ${vacation.destination}`
+                                }
                                 fill={true}
                                 className="object-cover"
                               />
