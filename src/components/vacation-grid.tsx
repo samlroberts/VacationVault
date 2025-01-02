@@ -10,10 +10,10 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 // import Link from "next/link";
-import { type VacationWithPhotos } from "~/lib/types";
+import { type VacationWithAllData } from "~/lib/types";
 import { Link } from "next-view-transitions";
 interface VacationGridProps {
-  vacations: VacationWithPhotos[];
+  vacations: VacationWithAllData[];
 }
 
 export default function VacationGrid({ vacations }: VacationGridProps) {

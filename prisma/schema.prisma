@@ -74,7 +74,8 @@ model Vacation {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
     photos Photo[]
     description String?
-    
+    journal JournalEntry[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -87,6 +88,17 @@ model Photo {
     caption String?
     userId String
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model JournalEntry {
+    id String @id @default(cuid())
+    vacationId String
+    vacation Vacation @relation(fields: [vacationId], references: [id], onDelete: Cascade)
+    date DateTime
+    entry String
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

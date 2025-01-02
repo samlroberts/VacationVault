@@ -1,5 +1,5 @@
 import { type Prisma } from "@prisma/client";
 
-export type VacationWithPhotos = Prisma.VacationGetPayload<{
-  include: { photos: true };
+export type VacationWithAllData = Prisma.VacationGetPayload<{
+  include: { photos: true; journal: true };
 }>;

@@ -5,18 +5,25 @@ import { Link } from "next-view-transitions";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { type VacationWithPhotos } from "~/lib/types";
+import { type VacationWithAllData } from "~/lib/types";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { HydrateClient } from "~/trpc/server";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionTrigger,
+  AccordionItem,
+} from "~/components/ui/accordion";
 
-async function getVacation(id: string): Promise<VacationWithPhotos | null> {
+async function getVacation(id: string): Promise<VacationWithAllData | null> {
   const vacation = await db.vacation.findUnique({
     where: {
       id,
     },
     include: {
       photos: true,
+      journal: true,
     },
   });
   return vacation;
@@ -74,6 +81,62 @@ export default async function VacationPage({
               <p className="text-gray-700">{vacation.description}</p>
             </div>
 
+            <div className="mb-6">
+              <div className="flex justify-between">
+                <h2 className="mb-2 text-xl font-semibold">Journal</h2>
+                <Link
+                  href={`/vacations/${vacation.id}/journal/new`}
+                  className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Add Journal Entry
+                </Link>
+              </div>
+
+              <Accordion type="single" collapsible>
+                <AccordionItem value="journal">
+                  <AccordionTrigger> Entries </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-4 gap-4">
+                      {vacation.journal.length > 0 ? (
+                        vacation.journal.map((entry) => {
+                          return (
+                            <div
+                              key={entry.id}
+                              className="rounded-lg border p-4"
+                            >
+                              <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-semibold">
+                                  {new Date(entry.date).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "2-digit",
+                                      day: "2-digit",
+                                      year: "numeric",
+                                      timeZone: "UTC",
+                                    },
+                                  )}
+                                </h3>
+                                <Link
+                                  href={`/vacations/${vacation.id}/journal/${entry.id}/edit`}
+                                  className="text-primary hover:text-primary/80"
+                                >
+                                  <PencilIcon className="h-4 w-4" />
+                                </Link>
+                              </div>
+                              <p className="h-10 truncate text-gray-700">
+                                {entry.entry}
+                              </p>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-gray-500">No journal entries yet.</p>
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
             <div>
               <div className="flex justify-between">
                 <h2 className="mb-4 text-xl font-semibold">Photos</h2>

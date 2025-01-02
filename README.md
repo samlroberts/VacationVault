@@ -8,6 +8,11 @@ A simple app for keeping track of Vacations and photos. Built with the [T3 Stack
 - Upload and caption images
 - Sign-in page doubles as registration page if new email entered
 
+## Notes
+
+- Dates are all UTC, I didn't worry about timezones for this exercise (a library like `luxon` would help for this which i've used before )
+-
+
 ## Getting Started
 
 1. Clone the repository

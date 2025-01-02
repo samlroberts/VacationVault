@@ -8,15 +8,16 @@ import { HydrateClient } from "~/trpc/server";
 import EditPhotoForm from "./edit-photo-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { type VacationWithPhotos } from "~/lib/types";
+import { type VacationWithAllData } from "~/lib/types";
 
-async function getVacation(id: string): Promise<VacationWithPhotos | null> {
+async function getVacation(id: string): Promise<VacationWithAllData | null> {
   const vacation = await db.vacation.findUnique({
     where: {
       id,
     },
     include: {
       photos: true,
+      journal: true,
     },
   });
   return vacation;

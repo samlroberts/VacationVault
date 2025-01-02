@@ -6,16 +6,17 @@ import VacationGrid from "~/components/vacation-grid";
 
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
-import { type VacationWithPhotos } from "~/lib/types";
+import { type VacationWithAllData } from "~/lib/types";
 import { Button } from "~/components/ui/button";
 
-async function getVacations(userId: string): Promise<VacationWithPhotos[]> {
+async function getVacations(userId: string): Promise<VacationWithAllData[]> {
   const vacations = await db.vacation.findMany({
     where: {
       userId,
     },
     include: {
       photos: true,
+      journal: true,
     },
   });
 
