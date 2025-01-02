@@ -11,6 +11,7 @@ A simple app for keeping track of Vacations and photos. Built with the [T3 Stack
 ## Notes
 
 - Dates are all UTC, I didn't worry about timezones for this exercise (a library like `luxon` would help for this which i've used before )
+- Photos are just uploaded to the `/upload` folder for simplicity of development and testing for now. Would use something like an S3 bucket in production.
 -
 
 ## Getting Started
