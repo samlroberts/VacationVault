@@ -102,14 +102,14 @@ export default function VacationTracker() {
               />
             </div>
             <div className="flex justify-end gap-2">
+              <Button variant="destructive" onClick={() => router.back()}>
+                Cancel
+              </Button>
               <Button
                 type="submit"
                 style={{ viewTransitionName: "add-vacation-button" }}
               >
                 Add Vacation
-              </Button>
-              <Button variant="secondary" onClick={() => router.back()}>
-                Cancel
               </Button>
             </div>
           </form>

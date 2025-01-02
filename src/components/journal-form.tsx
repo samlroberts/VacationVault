@@ -2,6 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { Link } from "next-view-transitions";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 interface JournalFormProps {
@@ -33,12 +34,13 @@ export default function JournalForm({
             {isEdit ? "Edit Journal Entry" : "New Journal Entry"}
             {isEdit && onDelete && (
               <form action={onDelete} className="ml-auto">
-                <button
+                <Button
                   type="submit"
+                  variant="destructive"
                   className="rounded-lg bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
                 >
                   Delete Entry
-                </button>
+                </Button>
               </form>
             )}
           </CardTitle>
@@ -81,12 +83,12 @@ export default function JournalForm({
             </div>
 
             <div className="flex justify-end">
-              <button
+              <Button
                 type="submit"
                 className="rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary/90 focus:outline-none focus:ring-4 focus:ring-primary/50"
               >
                 {isEdit ? "Update Entry" : "Save Entry"}
-              </button>
+              </Button>
             </div>
           </form>
         </CardContent>
