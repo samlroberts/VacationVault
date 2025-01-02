@@ -37,7 +37,8 @@ A simple app for keeping track of vacations. Built with the [T3 Stack](https://c
    cp .env.example .env
    ```
    Don't forget to generate an auth secret. See `.env.example` for details.
-4. Start the development server:
+4. Run `npm run db:push` to initialize the database
+5. Start the development server:
    ```bash
    npm run dev
    ```
