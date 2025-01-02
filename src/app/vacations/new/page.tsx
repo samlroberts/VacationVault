@@ -93,7 +93,7 @@ export default function VacationTracker() {
               />
             </div>
             <div>
-              <Label htmlFor="caption">Trip Description</Label>
+              <Label htmlFor="description">Trip Description</Label>
               <Textarea
                 id="description"
                 value={description}

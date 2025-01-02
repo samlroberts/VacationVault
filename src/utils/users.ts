@@ -8,8 +8,6 @@ export const getUserFromDb = async (email: string) => {
     },
   });
 
-  console.log("user from db", user);
-
   if (!user) {
     return null;
   }
