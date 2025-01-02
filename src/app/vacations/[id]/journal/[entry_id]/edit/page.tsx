@@ -36,6 +36,12 @@ export default async function EditJournalEntryPage({
   async function updateJournalEntry(formData: FormData) {
     "use server";
 
+    const session = await auth();
+
+    if (!session) {
+      redirect("/");
+    }
+
     const date = formData.get("date") as string;
     const entry = formData.get("entry") as string;
 
@@ -67,6 +73,13 @@ export default async function EditJournalEntryPage({
       isEdit={true}
       onDelete={async () => {
         "use server";
+
+        const session = await auth();
+
+        if (!session) {
+          redirect("/");
+        }
+
         await db.journalEntry.delete({
           where: { id: entryId },
         });

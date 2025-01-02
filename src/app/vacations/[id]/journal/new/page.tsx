@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import JournalForm from "~/components/journal-form";
+import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 
 export default async function NewJournalEntryPage({
@@ -23,6 +24,12 @@ export default async function NewJournalEntryPage({
 
   async function createJournalEntry(formData: FormData) {
     "use server";
+
+    const session = await auth();
+
+    if (!session) {
+      redirect("/");
+    }
 
     const date = formData.get("date") as string;
     const entry = formData.get("entry") as string;
