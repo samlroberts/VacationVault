@@ -24,7 +24,7 @@ export default function VacationGrid({ vacations }: VacationGridProps) {
         if (!photo) {
           photo = {
             id: "placeholder",
-            url: "https://placehold.co/500x200",
+            url: "https://placehold.co/500x200?text=Add+Some+Photos",
             caption: "No photo",
             userId: "placeholder",
             createdAt: new Date(),
