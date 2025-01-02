@@ -2,7 +2,6 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { HydrateClient } from "~/trpc/server";
 import EditPhotoForm from "./edit-photo-form";
@@ -28,12 +27,6 @@ export default async function EditPhotosPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await auth();
-
-  if (!session) {
-    redirect("/api/auth/signin");
-  }
-
   const vacationId = (await params).id;
 
   const vacation = await getVacation(vacationId);

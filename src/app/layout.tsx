@@ -13,9 +13,18 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/icon.svg" }],
 };
 
-export default function RootLayout({
+import { auth } from "~/server/auth";
+import { redirect } from "next/navigation";
+
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/api/auth/signin");
+  }
+
   return (
     <ViewTransitions>
       <html lang="en" className={`${GeistSans.variable}`}>
